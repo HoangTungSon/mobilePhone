@@ -6,11 +6,15 @@
 </head>
 <body>
 <canvas id="mobileCanvas" width="300" height="200" style="border:1px solid #2196F3"></canvas>
-<canvas id="phoneCanvas" width="300" height="200" style="border:1px solid #2196F3"></canvas>
+<canvas id="iphoneCanvas" width="300" height="200" style="border:1px solid #2196F3"></canvas>
 <p id="button"></p>
 <button id="chargePhone" onclick="nokia.chargeBattery()">Charge</button>
-<button id="sendPhone" onclick="nokia.sendMesseage()">Send</button>
+<button id="sendPhone" onclick="nokia.sendMesseage('phoneCanvas')">Send</button>
 <button id="clearPhone" onclick="nokia.clear()">Clear</button>
+<p id="button2"></p>
+<button id="chargeIPhone" onclick="iphone.chargeBattery()" style="left: 100px">Charge</button>
+<button id="sendIPhone" onclick="iphone.sendMesseage('mobileCanvas')" style="left: 100px">Send</button>
+<button id="clearIPhone" onclick="iphone.clear()" style="left: 100px">Clear</button>
 <script>
 
     DEFAULT_WIDTH = 300;
@@ -21,12 +25,11 @@
 
     function Mobile() {
 
-        this.button = function (battery) {
-            this.battery = battery;
-            this.data = document.getElementById("button");
+        this.button = function (battery,id) {
+            this.data = document.getElementById(id);
             this.button = "";
             for (let i = 1; i < 10; i++) {
-                this.button += "<button id='"+ i +"' onclick='"+ this.battery + "'>" + i + "</button>";
+                this.button += "<button id='"+ i +"' onclick='"+ battery + "'>" + i + "</button>";
                 if (i % 3 === 0) {
                     this.button += "<br>"
                 }
@@ -35,31 +38,38 @@
         };
 
         this.ctx = document.getElementById("mobileCanvas").getContext("2d");
+        this.canvas = document.getElementById("iphoneCanvas").getContext("2d");
         this.lifeBattery = 0;
         this.reduceBattery = DEFAULT_USE_BATTERY;
 
         this.word = [];
 
-        this.message = function (words) {
+        this.nokiaMessage = function (words) {
             this.ctx.clearRect(0,0,DEFAULT_WIDTH, DEFAULT_HEIGHT);
             this.word.push(words);
             this.ctx.font = "10px Arial";
             this.ctx.fillText(this.word, 0, 20);
         };
 
-        this.sendMesseage = function () {
-            this.message();
-            this.canvas = document.getElementById("phoneCanvas").getContext("2d");
+        this.iphoneMessage = function (words) {
+            this.canvas.clearRect(0,0,DEFAULT_WIDTH, DEFAULT_HEIGHT);
+            this.word.push(words);
             this.canvas.font = "10px Arial";
             this.canvas.fillText(this.word, 0, 20);
-            this.ctx.clearRect(0,0,DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        };
+
+        this.sendMesseage = function (canvas) {
+            this.nokiaMessage();
+            this.canvas.font = "10px Arial";
+            this.canvas.fillText(this.word, 0, 20);
         };
 
         this.clear = function () {
             this.canvas.clearRect(0,0,DEFAULT_WIDTH, DEFAULT_HEIGHT);
             this.ctx.clearRect(0,0,DEFAULT_WIDTH, DEFAULT_HEIGHT);
             this.word = [];
-        }
+        };
+
         this.receiveMesseage = function () {
 
         };
@@ -94,11 +104,15 @@
         }
     }
 
-    setInterval(function () {
-        nokia.useBattery();
-    }, 1000);
+ //   setInterval(function () {
+ //       nokia.useBattery();
+  //  }, 1000);
     let nokia = new Mobile();
-    nokia.button("nokia.message(this.id)");
+    nokia.button("nokia.nokiaMessage(this.id)", "button");
+
+    let iphone = new Mobile();
+    iphone.button("iphone.iphoneMessage(this.id)", "button2");
+
 
 
 
