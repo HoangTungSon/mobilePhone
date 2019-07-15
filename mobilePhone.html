@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mobile Phone</title>
+</head>
+<body>
+<canvas id="mobileCanvas" width="300" height="200" style="border:1px solid #2196F3"></canvas>
+<canvas id="phoneCanvas" width="300" height="200" style="border:1px solid #2196F3"></canvas>
+<p id="button"></p>
+<button id="chargePhone" onclick="nokia.chargeBattery()">Charge</button>
+<button id="sendPhone" onclick="nokia.sendMesseage()">Send</button>
+<button id="clearPhone" onclick="nokia.clear()">Clear</button>
+<script>
+
+    DEFAULT_WIDTH = 300;
+    DEFAULT_HEIGHT = 200;
+
+    DEFAULT_BATTERY = 50;
+    DEFAULT_USE_BATTERY = 5;
+
+    function Mobile() {
+
+        this.button = function (battery) {
+            this.battery = battery;
+            this.data = document.getElementById("button");
+            this.button = "";
+            for (let i = 1; i < 10; i++) {
+                this.button += "<button id='"+ i +"' onclick='"+ this.battery + "'>" + i + "</button>";
+                if (i % 3 === 0) {
+                    this.button += "<br>"
+                }
+            }
+            this.data.innerHTML = this.button;
+        };
+
+        this.ctx = document.getElementById("mobileCanvas").getContext("2d");
+        this.lifeBattery = 0;
+        this.reduceBattery = DEFAULT_USE_BATTERY;
+
+        this.word = [];
+
+        this.message = function (words) {
+            this.ctx.clearRect(0,0,DEFAULT_WIDTH, DEFAULT_HEIGHT);
+            this.word.push(words);
+            this.ctx.font = "10px Arial";
+            this.ctx.fillText(this.word, 0, 20);
+        };
+
+        this.sendMesseage = function () {
+            this.message();
+            this.canvas = document.getElementById("phoneCanvas").getContext("2d");
+            this.canvas.font = "10px Arial";
+            this.canvas.fillText(this.word, 0, 20);
+            this.ctx.clearRect(0,0,DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        };
+
+        this.clear = function () {
+            this.canvas.clearRect(0,0,DEFAULT_WIDTH, DEFAULT_HEIGHT);
+            this.ctx.clearRect(0,0,DEFAULT_WIDTH, DEFAULT_HEIGHT);
+            this.word = [];
+        }
+        this.receiveMesseage = function () {
+
+        };
+
+        this.turnOn = function () {
+            if (this.lifeBattery === DEFAULT_BATTERY) {
+                return this.ctx.fillRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT)
+            } else if (this.lifeBattery < DEFAULT_BATTERY) {
+                return this.ctx.fillRect(250, 0, this.lifeBattery, 20);
+            }
+        };
+
+        this.useBattery = function () {
+            console.log(this.lifeBattery);
+            if (this.lifeBattery < DEFAULT_BATTERY) {
+                this.lifeBattery += this.reduceBattery;
+            } else if (this.lifeBattery === DEFAULT_BATTERY) {
+                this.lifeBattery = DEFAULT_BATTERY;
+                nokia.turnOn();
+            }
+            return this.ctx.fillRect(250, 0, this.lifeBattery, 20);
+        };
+
+        this.chargeBattery = function () {
+            if (this.lifeBattery <= DEFAULT_BATTERY && this.lifeBattery > 0) {
+                console.log("Charging");
+                console.log(this.lifeBattery);
+                this.lifeBattery -= this.reduceBattery;
+                this.ctx.clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+                return this.ctx.fillRect(250, 0, this.lifeBattery, 20);
+            }
+        }
+    }
+
+    setInterval(function () {
+        nokia.useBattery();
+    }, 1000);
+    let nokia = new Mobile();
+    nokia.button("nokia.message(this.id)");
+
+
+
+
+
+</script>
+</body>
+</html>
